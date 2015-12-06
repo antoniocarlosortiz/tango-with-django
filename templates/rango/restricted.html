@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block body_block %}
+
+<h1>This is a restricted page!</h1>
+<a href="{% url 'index' %}">Index</a>
+
+{% endblock %}
