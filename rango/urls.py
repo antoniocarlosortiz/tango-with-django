@@ -10,6 +10,10 @@ urlpatterns = patterns('',
     url(r'^restricted/', views.restricted, name='restricted'),
     url(r'^search/', views.search, name='search'),
     url(r'^goto/', views.track_url, name='goto'),
+    url(r'^add_profile/', views.register_profile, name='add_profile'),
+    url(r'^profile/', views.register_profile, name='profile'),
+    url(r'^list-users/', views.list_users, name='list_users'),
+    url(r'^view-user/(?P<user_pk>[\w\-]+)/$', views.view_user, name='view_user')
     )
 
 

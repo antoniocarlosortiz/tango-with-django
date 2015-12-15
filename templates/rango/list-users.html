@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}All Users{% endblock %}
+
+{% block body_block %}
+
+<div class="page-header">
+    <h1>List of Users</h1>
+</div>
+    {% for user in users %}
+        <a href="{% url 'view_user' user.pk %}"><p>{{ user }}</p></a>
+    {% endfor %}
+
+{% endblock %}

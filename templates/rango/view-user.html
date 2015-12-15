@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}All Users{% endblock %}
+
+{% block body_block %}
+
+<div class="page-header">
+    <h1>{{ user.username }}</h1>
+</div>
+    <p>name: <b>{{ user.username}}</b></p>
+    <p>website: <b>{{ user_profile.website }}</b></p>
+    <p><img src='/media/{{ user_profile.picture}}' alt="Picture of Rango" style="width:500px; height: auto;"/></p>
+
+{% endblock %}

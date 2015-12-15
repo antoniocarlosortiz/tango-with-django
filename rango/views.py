@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rango.models import Category, Page
+from rango.models import Category, Page, UserProfile
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from rango.bing_search import run_query
 from django.shortcuts import redirect
+from django.contrib.auth.models import User
 
 def track_url(request):
     context_dict = {}
@@ -263,9 +264,6 @@ def user_login(request):
         return render(request, 'rango/login.html', {})
 
 
-
-
-
 from django.contrib.auth import logout
 
 @login_required
@@ -274,6 +272,8 @@ def user_logout(request):
 
     return HttpResponseRedirect('/rango/')
 '''
+
+
 @login_required
 def restricted(request):
     return render(request, 'rango/restricted.html', {})
@@ -290,3 +290,58 @@ def search(request):
             result_list = run_query(query)
 
     return render(request, 'rango/search.html', {'result_list': result_list})
+
+
+@login_required
+def register_profile(request):
+    args = {}
+    user = request.user
+
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+        args['profile_form'] = UserProfileForm(instance=user_profile)
+    except Exception as e:
+        print repr(e)
+        args['profile_form'] = UserProfileForm()
+
+    if request.method == 'POST':
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+            profile_form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        except Exception as e:
+            print repr(e)
+            profile_form = UserProfileForm(request.POST, request.FILES)
+
+        if profile_form.is_valid():
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            return HttpResponseRedirect('/rango/')
+
+    return render(request, 'rango/profile_registration.html', args)
+
+
+@login_required
+def list_users(request):
+    args = {}
+    args['current_user'] = request.user
+    users = User.objects.all()
+    args['users'] = users
+
+
+    return render(request, 'rango/list-users.html', args)
+
+
+@login_required
+def view_user(request, user_pk):
+    args = {}
+
+    user = User.objects.get(pk=user_pk)
+    args['user'] = user
+    try:
+        user_profile = UserProfile.objects.get(user=user)
+        args['user_profile'] = user_profile
+    except Exception as e:
+        print repr(e)
+
+    return render(request, 'rango/view-user.html', args)
